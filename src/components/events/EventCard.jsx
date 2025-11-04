@@ -7,18 +7,28 @@ import {
   CardTitle,
 } from "../ui/card";
 
-function EventCard() {
+function EventCard({ event }) {
+  console.log(event.coordinator);
   return (
     <>
-      <Card>
+      <Card key={event.id}>
         <CardHeader>
-          <CardTitle>Event Name</CardTitle>
-          <CardDescription>This is event description.</CardDescription>
+          <CardTitle>Name: {event.eventName}</CardTitle>
+          <CardDescription>Description: {event.eventDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2">
-            <span>Co-ordinators: </span>
-            <span>Venue: </span>
+          <span> Coordinators: 
+              {Array.isArray(event.coordinator) && event.coordinator.length > 0
+                ? event.coordinator
+                    .map((name) =>
+                      name.replace(/^\[?"?/, "").replace(/"?\]?$/, "")
+                    )
+                    .join(", ")
+                : "N/A"}
+            </span>
+
+            <span>Venue : {event.venue} </span>
           </div>
         </CardContent>
       </Card>
