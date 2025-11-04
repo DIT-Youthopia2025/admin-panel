@@ -1,7 +1,4 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Tagline } from "@/components/pro-blocks/landing-page/tagline";
 
 export function NotFoundPage() {
   return (
@@ -14,7 +11,7 @@ export function NotFoundPage() {
           {/* Section Title */}
           <div className="section-title-gap-xl flex flex-col items-center text-center">
             {/* Tagline */}
-            <Tagline>404 Section</Tagline>
+            <span className="text-3xl">404</span>
             {/* Main Heading */}
             <h1 id="error-title" className="heading-xl">
               Page not found
