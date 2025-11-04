@@ -1,8 +1,33 @@
-import axios from "axios"
+import axios from "axios";
 
-const base_url = "http://localhost:3001/api"
+const baseUrl = "http://localhost:3001/api";
 
-export const createEvent = async (data) => {
-    const res = await axios.post(`${base_url}/events`, data)
-    return res
-}
+// GET all events
+export const fetchEvents = async () => {
+  const response = await axios.get(`${baseUrl}/events`);
+  return response.data;
+};
+
+// GET single event
+export const fetchEventById = async (id) => {
+  const response = await axios.get(`${baseUrl}/events/${id}`);
+  return response.data;
+};
+
+// CREATE event
+export const createEvent = async (newEvent) => {
+  const response = await axios.post(`${baseUrl}/events`, newEvent);
+  return response.data;
+};
+
+// UPDATE event
+export const updateEvent = async ({ id, updatedEvent }) => {
+  const response = await axios.put(`${baseUrl}/events/${id}`, updatedEvent);
+  return response.data;
+};
+
+// DELETE event
+export const deleteEvent = async (id) => {
+  const response = await axios.delete(`${baseUrl}/events/${id}`);
+  return response.data;
+};
