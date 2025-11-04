@@ -7,11 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Button } from "../ui/button"; 
+import { Button } from "../ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteEvent, fetchEventById } from "@/api/event"; 
-import { toast } from "sonner"; 
+import { deleteEvent, fetchEventById } from "@/api/event";
+import { toast } from "sonner";
 import EventDialog from "./EventDialog";
+import { Eye, IndianRupee, Pen, Trash } from "lucide-react";
+import PriceDialog from "./PriceDialog";
 
 function EventCard({ event }) {
   const queryClient = useQueryClient();
@@ -20,7 +22,7 @@ function EventCard({ event }) {
     mutationFn: deleteEvent,
     onSuccess: () => {
       toast.success("Event deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["events"] }); 
+      queryClient.invalidateQueries({ queryKey: ["events"] });
     },
     onError: (error) => {
       toast.error("Error deleting event");
@@ -32,11 +34,10 @@ function EventCard({ event }) {
     deleteMutation.mutate(event.id);
   };
 
-
   const { refetch } = useQuery({
     queryKey: ["event", event.id],
     queryFn: () => fetchEventById(event.id),
-    enabled: false, 
+    enabled: false,
   });
 
   const handleView = () => {
@@ -62,6 +63,13 @@ function EventCard({ event }) {
     endTime: event.endTime || "",
     participantMax: event.participantMax ?? "",
     participantMin: event.participantMin ?? "",
+  };
+
+  const initialPriceData = {
+    teamSize: 0,
+    priceDit: 0,
+    priceNonDit: 0,
+    eventId: event.id,
   };
 
   return (
@@ -90,23 +98,41 @@ function EventCard({ event }) {
             <span>Venue : {event.venue} </span>
           </div>
         </CardContent>
-        
-        <CardFooter className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={handleView}>
-            View
-          </Button>
-          <EventDialog mode="edit" initialData={initialEditData} eventId={event.id}>
-            <Button>
-              Edit
+
+        <CardFooter className="flex justify-between">
+          <div>
+            <PriceDialog initialData={initialPriceData} eventId={event.id}>
+              <Button className="cursor-pointer">
+                <IndianRupee />
+              </Button>
+            </PriceDialog>
+          </div>
+          <div className="flex justify-between gap-2">
+            <Button
+              variant="secondary"
+              onClick={handleView}
+              className="cursor-pointer"
+            >
+              <Eye />
             </Button>
-          </EventDialog>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={deleteMutation.isPending} 
-          >
-            {deleteMutation.isPending ? "Deleting..." : "Delete"}
-          </Button>
+            <EventDialog
+              mode="edit"
+              initialData={initialEditData}
+              eventId={event.id}
+            >
+              <Button className="cursor-pointer">
+                <Pen />
+              </Button>
+            </EventDialog>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              className="cursor-pointer"
+            >
+              <Trash />
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </>
