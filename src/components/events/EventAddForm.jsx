@@ -3,26 +3,83 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { createEvent } from "@/api/event";
-import { data } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createEvent, updateEvent } from "@/api/event";
+import { toast } from "sonner";
+import { useRef } from "react";
 
-export function EventAddForm() {
-  const { register, handleSubmit } = useForm();
+export function EventAddForm({ onSuccess, mode = "create", initialData, eventId }) {
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: initialData || {},
+  });
+  const queryClient = useQueryClient();
+  const isSubmittingRef = useRef(false);
+  
   const mutation = useMutation({
     mutationFn: (data) => {
-      return createEvent(data);
+      return mode === "edit"
+        ? updateEvent({ id: eventId, updatedEvent: data })
+        : createEvent(data);
+    },
+    onSuccess: () => {
+      toast.success(mode === "edit" ? "Event updated successfully!" : "Event created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      reset(); // Reset form after successful submission
+      isSubmittingRef.current = false; // Reset flag
+      if (onSuccess) {
+        onSuccess(); // Callback to close dialog or handle success
+      }
+    },
+    onError: (error) => {
+      toast.error(
+        error?.response?.data?.message || (mode === "edit" ? "Error updating event" : "Error creating event")
+      );
+      console.error(mode === "edit" ? "Error updating event:" : "Error creating event:", error);
+      isSubmittingRef.current = false; // Reset flag on error
     },
   });
 
   const onSubmit = async (data) => {
-    const formData = new FormData();
+    // Prevent duplicate submissions
+    if (isSubmittingRef.current || mutation.isPending) {
+      return;
+    }
 
+    isSubmittingRef.current = true;
+
+    const hasNewPoster = data?.eventPoster && data.eventPoster.length > 0;
+
+    if (mode === "edit" && !hasNewPoster) {
+      // Send JSON when editing without a new poster to avoid multipart handling on backend
+      const payload = Object.fromEntries(
+        Object.entries(data).flatMap(([key, value]) => {
+          if (key === "eventPoster") {
+            return [];
+          }
+          if (key === "coordinator") {
+            const coordinatorArray = String(value || "")
+              .split(",")
+              .map((c) => c.trim())
+              .filter(Boolean);
+            return [["coordinator", coordinatorArray]];
+          }
+          return [[key, value]];
+        })
+      );
+
+      mutation.mutate(payload);
+      return;
+    }
+
+    // Default: create or edit with new poster -> use FormData
+    const formData = new FormData();
     for (const key in data) {
       if (key === "eventPoster") {
-        formData.append("eventPoster", data.eventPoster[0]);
+        if (hasNewPoster) {
+          formData.append("eventPoster", data.eventPoster[0]);
+        }
       } else if (key === "coordinator") {
-        const coordinatorArray = data.coordinator
+        const coordinatorArray = String(data.coordinator || "")
           .split(",")
           .map((c) => c.trim())
           .filter(Boolean);
@@ -32,16 +89,12 @@ export function EventAddForm() {
       }
     }
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
     mutation.mutate(formData);
   };
 
   return (
-    <div className="w-full max-w-none" onSubmit={handleSubmit(onSubmit)}>
-      <form action="submit">
+    <div className="w-full max-w-none">
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full max-w-none">
           <FieldSet>
             <FieldGroup>
@@ -77,7 +130,7 @@ export function EventAddForm() {
                 <Input
                   id="eventPoster"
                   type="file"
-                  {...register("eventPoster", { required: true })}
+                  {...register("eventPoster", { required: mode !== "edit" })}
                 />
               </Field>
             </FieldGroup>
@@ -165,7 +218,7 @@ export function EventAddForm() {
                     Participant Min
                   </FieldLabel>
                   <Input
-                    id="eventDescription"
+                    id="participantMin"
                     type="text"
                     {...register("participantMin", { required: true })}
                   />
@@ -174,8 +227,10 @@ export function EventAddForm() {
             </FieldGroup>
           </FieldSet>
         </div>
-        <Button type="submit" className="w-full mt-6 cursor-pointer">
-          Submit
+        <Button type="submit" className="w-full mt-6 cursor-pointer" disabled={mutation.isPending || isSubmittingRef.current}>
+          {mutation.isPending || isSubmittingRef.current
+            ? mode === "edit" ? "Updating..." : "Creating..."
+            : mode === "edit" ? "Update" : "Submit"}
         </Button>
       </form>
     </div>
