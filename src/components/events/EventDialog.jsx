@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +9,39 @@ import {
 } from "@/components/ui/dialog";
 import { EventAddForm } from "./EventAddForm";
 
-function EventDialog({ children }) {
+function EventDialog({ children, mode = "create", initialData, eventId, open: controlledOpen, onOpenChange }) {
+  const [open, setOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const dialogOpen = isControlled ? controlledOpen : open;
+  const [formKey, setFormKey] = useState(0);
+
+  const handleOpenChange = (newOpen) => {
+    if (!isControlled) setOpen(newOpen);
+    if (onOpenChange) onOpenChange(newOpen);
+    if (!newOpen) {
+      // Reset form key when dialog closes to ensure clean state on next open
+      setFormKey(prev => prev + 1);
+    }
+  };
+
   return (
     <>
-      <Dialog>
+      <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger>{children}</DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Hello</DialogTitle>
+            <DialogTitle>{mode === "edit" ? "Edit Event" : "Create New Event"}</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              {mode === "edit" ? "Update the event details." : "Fill in the details below to create a new event."}
             </DialogDescription>
           </DialogHeader>
-          <EventAddForm />
+          <EventAddForm
+            key={formKey}
+            mode={mode}
+            initialData={initialData}
+            eventId={eventId}
+            onSuccess={() => handleOpenChange(false)}
+          />
         </DialogContent>
       </Dialog>
     </>

@@ -37,9 +37,7 @@ export function LoginForm({ className, ...props }) {
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+    } = useForm();
 
   const onSubmit = (data) => {
     mutation.mutate({ data });

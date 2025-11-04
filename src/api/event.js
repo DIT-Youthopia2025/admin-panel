@@ -16,6 +16,7 @@ export const fetchEventById = async (id) => {
 
 // CREATE event
 export const createEvent = async (newEvent) => {
+  // axios automatically sets Content-Type to multipart/form-data for FormData objects
   const response = await axios.post(`${baseUrl}/events`, newEvent);
   return response.data;
 };
