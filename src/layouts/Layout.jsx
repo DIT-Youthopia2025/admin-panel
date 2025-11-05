@@ -1,10 +1,24 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const Layout = () => {
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      console.log(token);
+      return navigate("/login");
+    }
+  }, [token, navigate]);
+
+  if (!token) {
+    return null;
+  }
+
   return (
     <>
       <SidebarProvider

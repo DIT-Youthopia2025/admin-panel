@@ -26,7 +26,8 @@ export function LoginForm({ className, ...props }) {
     mutationFn: (data) => {
       return login(data);
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
+      localStorage.setItem("token", res.data.token);
       navigate("/");
     },
     onError: () => {
@@ -34,10 +35,7 @@ export function LoginForm({ className, ...props }) {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
     mutation.mutate({ data });
