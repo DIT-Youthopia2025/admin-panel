@@ -67,7 +67,8 @@ function EventCard({ event }) {
         <CardHeader>
           <CardTitle>Name: {event.eventName}</CardTitle>
           <CardDescription>
-            Description: {event.eventDescription}
+            <strong>Description:</strong> {event.eventDescription.slice(0, 200)}
+            ...
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -29,8 +29,8 @@ export function PriceAddForm({
     onSuccess: () => {
       toast.success(
         mode === "edit"
-          ? "Event updated successfully!"
-          : "Event created successfully!"
+          ? "Price updated successfully!"
+          : "Price created successfully!"
       );
       queryClient.invalidateQueries({ queryKey: ["events"] });
       reset(); // Reset form after successful submission
