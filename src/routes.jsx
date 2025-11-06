@@ -7,6 +7,7 @@ import Payments from "./pages/Payments";
 import Access from "./pages/Access";
 import Login from "./pages/Login";
 import { NotFoundPage } from "./pages/404Page";
+import EventDetails from "./pages/EventDetails";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/events",
         element: <Events />,
+      },
+      {
+        path: "/event/:id", // <-- Add this new route
+        element: <EventDetails />,
       },
       {
         path: "/registration",
