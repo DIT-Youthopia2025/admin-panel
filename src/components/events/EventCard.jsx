@@ -8,15 +8,17 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteEvent, fetchEventById } from "@/api/event";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteEvent } from "@/api/event"; // Removed fetchEventById
 import { toast } from "sonner";
 import EventDialog from "./EventDialog";
 import { Eye, IndianRupee, Pen, Trash } from "lucide-react";
 import PriceDialog from "./PriceDialog";
+import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
 
 function EventCard({ event }) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate(); // <-- Initialize navigate
 
   const deleteMutation = useMutation({
     mutationFn: deleteEvent,
@@ -33,22 +35,9 @@ function EventCard({ event }) {
   const handleDelete = () => {
     deleteMutation.mutate(event.id);
   };
-
-  const { refetch } = useQuery({
-    queryKey: ["event", event.id],
-    queryFn: () => fetchEventById(event.id),
-    enabled: false,
-  });
-
+  
   const handleView = () => {
-    refetch().then((result) => {
-      if (result.isSuccess) {
-        console.log("View Event Data:", result.data);
-        toast.info(`Viewing event: ${result.data.eventName}`);
-      } else if (result.isError) {
-        toast.error("Error fetching event details");
-      }
-    });
+    navigate(`/event/${event.id}`);
   };
 
   const initialEditData = {
@@ -110,7 +99,7 @@ function EventCard({ event }) {
           <div className="flex justify-between gap-2">
             <Button
               variant="secondary"
-              onClick={handleView}
+              onClick={handleView} // <-- This onClick handler now navigates
               className="cursor-pointer"
             >
               <Eye />
