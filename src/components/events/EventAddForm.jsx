@@ -8,13 +8,18 @@ import { createEvent, updateEvent } from "@/api/event";
 import { toast } from "sonner";
 import { useRef } from "react";
 
-export function EventAddForm({ onSuccess, mode = "create", initialData, eventId }) {
+export function EventAddForm({
+  onSuccess,
+  mode = "create",
+  initialData,
+  eventId,
+}) {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: initialData || {},
   });
   const queryClient = useQueryClient();
   const isSubmittingRef = useRef(false);
-  
+
   const mutation = useMutation({
     mutationFn: (data) => {
       return mode === "edit"
@@ -22,7 +27,11 @@ export function EventAddForm({ onSuccess, mode = "create", initialData, eventId 
         : createEvent(data);
     },
     onSuccess: () => {
-      toast.success(mode === "edit" ? "Event updated successfully!" : "Event created successfully!");
+      toast.success(
+        mode === "edit"
+          ? "Event updated successfully!"
+          : "Event created successfully!"
+      );
       queryClient.invalidateQueries({ queryKey: ["events"] });
       reset(); // Reset form after successful submission
       isSubmittingRef.current = false; // Reset flag
@@ -32,9 +41,13 @@ export function EventAddForm({ onSuccess, mode = "create", initialData, eventId 
     },
     onError: (error) => {
       toast.error(
-        error?.response?.data?.message || (mode === "edit" ? "Error updating event" : "Error creating event")
+        error?.response?.data?.message ||
+          (mode === "edit" ? "Error updating event" : "Error creating event")
       );
-      console.error(mode === "edit" ? "Error updating event:" : "Error creating event:", error);
+      console.error(
+        mode === "edit" ? "Error updating event:" : "Error creating event:",
+        error
+      );
       isSubmittingRef.current = false; // Reset flag on error
     },
   });
@@ -71,25 +84,7 @@ export function EventAddForm({ onSuccess, mode = "create", initialData, eventId 
       return;
     }
 
-    // Default: create or edit with new poster -> use FormData
-    const formData = new FormData();
-    for (const key in data) {
-      if (key === "eventPoster") {
-        if (hasNewPoster) {
-          formData.append("eventPoster", data.eventPoster[0]);
-        }
-      } else if (key === "coordinator") {
-        const coordinatorArray = String(data.coordinator || "")
-          .split(",")
-          .map((c) => c.trim())
-          .filter(Boolean);
-        formData.append("coordinator", JSON.stringify(coordinatorArray));
-      } else {
-        formData.append(key, data[key]);
-      }
-    }
-
-    mutation.mutate(formData);
+    mutation.mutate(data);
   };
 
   return (
@@ -129,7 +124,6 @@ export function EventAddForm({ onSuccess, mode = "create", initialData, eventId 
                 <FieldLabel htmlFor="eventPoster">Event Poster</FieldLabel>
                 <Input
                   id="eventPoster"
-                  type="file"
                   {...register("eventPoster", { required: mode !== "edit" })}
                 />
               </Field>
@@ -227,10 +221,18 @@ export function EventAddForm({ onSuccess, mode = "create", initialData, eventId 
             </FieldGroup>
           </FieldSet>
         </div>
-        <Button type="submit" className="w-full mt-6 cursor-pointer" disabled={mutation.isPending || isSubmittingRef.current}>
+        <Button
+          type="submit"
+          className="w-full mt-6 cursor-pointer"
+          disabled={mutation.isPending || isSubmittingRef.current}
+        >
           {mutation.isPending || isSubmittingRef.current
-            ? mode === "edit" ? "Updating..." : "Creating..."
-            : mode === "edit" ? "Update" : "Submit"}
+            ? mode === "edit"
+              ? "Updating..."
+              : "Creating..."
+            : mode === "edit"
+            ? "Update"
+            : "Submit"}
         </Button>
       </form>
     </div>
