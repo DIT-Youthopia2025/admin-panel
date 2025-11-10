@@ -14,11 +14,11 @@ export const createPrice = async (data) => {
     return res;
 }
 
-export const getPriceByEventId = async (id) => {
-    const res = await axios.get(`${base_url}/prices/${id}`, {
+export const deletePrice = async (id) => {
+    const res = await axios.delete(`${base_url}/prices/delete/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     })
-    return res.data
+    return res
 }

@@ -12,53 +12,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { Pen, Trash } from "lucide-react";
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-];
+import { useMutation } from "@tanstack/react-query";
+import { deletePrice } from "@/api/price";
 
 function PriceTable({ prices }) {
+  const mutation = useMutation({
+    mutationFn: (id) => deletePrice(id),
+  });
   console.log(prices);
   return (
     <Card>
@@ -87,7 +47,10 @@ function PriceTable({ prices }) {
                     <Button size={"icon"}>
                       <Pen />
                     </Button>
-                    <Button size={"icon"}>
+                    <Button
+                      size={"icon"}
+                      onClick={() => mutation.mutate(price.id)}
+                    >
                       <Trash />
                     </Button>
                   </div>
