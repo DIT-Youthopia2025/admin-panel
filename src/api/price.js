@@ -7,9 +7,8 @@ const token = localStorage.getItem("token");
 
 export const createPrice = async (data) => {
     const res = await axios.post(`${base_url}/prices/create`, data, {
-        withCredentials: true,
         headers: {
-                Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
         },
     })
     return res;
