@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import PriceTable from "@/components/events/PriceTable";
 
 function EventDetails() {
   const { id } = useParams();
@@ -82,6 +83,10 @@ function EventDetails() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="mt-6">
+        <PriceTable prices={event.prices} />
+      </div>
     </div>
   );
 }

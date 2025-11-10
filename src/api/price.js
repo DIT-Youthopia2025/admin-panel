@@ -13,3 +13,12 @@ export const createPrice = async (data) => {
     })
     return res;
 }
+
+export const getPriceByEventId = async (id) => {
+    const res = await axios.get(`${base_url}/prices/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    return res.data
+}
