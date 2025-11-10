@@ -12,14 +12,22 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { Pen, Trash } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePrice } from "@/api/price";
+import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 
 function PriceTable({ prices }) {
+  const queryClient = useQueryClient();
+  const params = useParams();
   const mutation = useMutation({
     mutationFn: (id) => deletePrice(id),
+    onSuccess: async () => {
+      toast.success("Price Deleted succesfully");
+      queryClient.invalidateQueries({ queryKey: ["event", params.id] });
+      await queryClient.refetchQueries({ queryKey: ["event", params.id] });
+    },
   });
-  console.log(prices);
   return (
     <Card>
       <CardHeader>
