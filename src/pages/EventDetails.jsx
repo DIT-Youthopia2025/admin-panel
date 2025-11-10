@@ -34,8 +34,6 @@ function EventDetails() {
     );
   }
 
-  console.log(event);
-
   if (!event) {
     return <div className="p-6">Event not found.</div>;
   }
