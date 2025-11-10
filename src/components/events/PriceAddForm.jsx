@@ -111,6 +111,21 @@ export function PriceAddForm({
               </Field>
             </FieldGroup>
           </FieldSet>
+
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="priceDescription">
+                  Price Description
+                </FieldLabel>
+                <Input
+                  id="priceDescription"
+                  type="text"
+                  {...register("priceDescription")}
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
         </div>
 
         <Button

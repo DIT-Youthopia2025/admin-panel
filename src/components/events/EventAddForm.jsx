@@ -2,11 +2,18 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEvent, updateEvent } from "@/api/event";
 import { toast } from "sonner";
 import { useRef } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function EventAddForm({
   onSuccess,
@@ -14,7 +21,7 @@ export function EventAddForm({
   initialData,
   eventId,
 }) {
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset, control } = useForm({
     defaultValues: initialData || {},
   });
   const queryClient = useQueryClient();
@@ -54,6 +61,7 @@ export function EventAddForm({
 
   const onSubmit = async (data) => {
     // Prevent duplicate submissions
+    console.log("Hello");
     if (isSubmittingRef.current || mutation.isPending) {
       return;
     }
@@ -123,6 +131,7 @@ export function EventAddForm({
               <Field>
                 <FieldLabel htmlFor="eventPoster">Event Poster</FieldLabel>
                 <Input
+                  type="text"
                   id="eventPoster"
                   {...register("eventPoster", { required: mode !== "edit" })}
                 />
@@ -204,7 +213,7 @@ export function EventAddForm({
                   <Input
                     id="participantMax"
                     type="text"
-                    {...register("participantMax", { required: true })}
+                    {...register("participantMax")}
                   />
                 </Field>
                 <Field>
@@ -214,7 +223,45 @@ export function EventAddForm({
                   <Input
                     id="participantMin"
                     type="text"
-                    {...register("participantMin", { required: true })}
+                    {...register("participantMin")}
+                  />
+                </Field>
+              </div>
+            </FieldGroup>
+          </FieldSet>
+          <FieldSet>
+            <FieldGroup>
+              <div className="flex justify-between gap-3 mt-4">
+                <Field>
+                  <FieldLabel htmlFor="extraMember">Extra Members</FieldLabel>
+                  <Controller
+                    name="extraMember"
+                    control={control}
+                    defaultValue="false"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Will there be extra members?" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">True</SelectItem>
+                          <SelectItem value="false">False</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="extraMemberPrice">
+                    Extra Member Price
+                  </FieldLabel>
+                  <Input
+                    id="extraMemberPrice"
+                    type="text"
+                    {...register("extraMemberPrice", { required: true })}
                   />
                 </Field>
               </div>

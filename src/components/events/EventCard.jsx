@@ -35,7 +35,7 @@ function EventCard({ event }) {
   const handleDelete = () => {
     deleteMutation.mutate(event.id);
   };
-  
+
   const handleView = () => {
     navigate(`/event/${event.id}`);
   };
@@ -73,17 +73,7 @@ function EventCard({ event }) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2">
-            <span>
-              {" "}
-              Coordinators:
-              {Array.isArray(event.coordinator) && event.coordinator.length > 0
-                ? event.coordinator
-                    .map((name) =>
-                      name.replace(/^\[?"?/, "").replace(/"?\]?$/, "")
-                    )
-                    .join(", ")
-                : "N/A"}
-            </span>
+            <span> Coordinators: {event.coordinator}</span>
 
             <span>Venue : {event.venue} </span>
           </div>

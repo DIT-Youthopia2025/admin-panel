@@ -28,20 +28,16 @@ function EventDetails() {
   }
 
   if (isError) {
-    return <div className="p-6 text-red-500">Error fetching event details.</div>;
+    return (
+      <div className="p-6 text-red-500">Error fetching event details.</div>
+    );
   }
+
+  console.log(event);
 
   if (!event) {
     return <div className="p-6">Event not found.</div>;
   }
-
-  // Helper to format coordinators
-  const coordinators =
-    Array.isArray(event.coordinator) && event.coordinator.length > 0
-      ? event.coordinator
-          .map((name) => name.replace(/^\[?"?/, "").replace(/"?\]?$/, ""))
-          .join(", ")
-      : "N/A";
 
   return (
     <div className="p-6">
@@ -67,10 +63,11 @@ function EventDetails() {
               <strong>Venue:</strong> {event.venue}
             </p>
             <p>
-              <strong>Category:</strong> <Badge variant="outline">{event.category}</Badge>
+              <strong>Category:</strong>{" "}
+              <Badge variant="outline">{event.category}</Badge>
             </p>
             <p>
-              <strong>Coordinators:</strong> {coordinators}
+              <strong>Coordinators:</strong> {event.coordinators}
             </p>
             <p>
               <strong>Event Time:</strong>{" "}
