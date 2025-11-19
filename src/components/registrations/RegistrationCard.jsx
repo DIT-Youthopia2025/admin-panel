@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { deleteRegistration } from "@/api/registration";
 import { Link, useNavigate } from "react-router-dom";
+import { getRoleFromToken } from "@/lib/decodeToken";
 
 function RegistrationCard({ registration, key }) {
   const navigate = useNavigate();
@@ -27,6 +28,8 @@ function RegistrationCard({ registration, key }) {
   const handleDelete = (id) => {
     deleteMutation.mutate(id);
   };
+
+  const role = getRoleFromToken();
 
   return (
     <Card key={key}>
@@ -56,14 +59,16 @@ function RegistrationCard({ registration, key }) {
               <Eye />
             </Link>
           </Button>
-          <Button
-            variant="destructive"
-            onClick={() => handleDelete()}
-            disabled={deleteMutation.isPending}
-            className="cursor-pointer"
-          >
-            <Trash />
-          </Button>
+          {role === "superadmin" && (
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete()}
+              disabled={deleteMutation.isPending}
+              className="cursor-pointer"
+            >
+              <Trash />
+            </Button>
+          )}
         </div>
       </CardFooter>
     </Card>
