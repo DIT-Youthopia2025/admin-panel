@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePrice } from "@/api/price";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
+import { getRoleFromToken } from "@/lib/decodeToken";
 
 function PriceTable({ prices }) {
   const queryClient = useQueryClient();
@@ -28,6 +29,7 @@ function PriceTable({ prices }) {
       await queryClient.refetchQueries({ queryKey: ["event", params.id] });
     },
   });
+  const role = getRoleFromToken();
   return (
     <Card>
       <CardHeader>
@@ -41,7 +43,9 @@ function PriceTable({ prices }) {
               <TableHead className="w-[100px]">Team Size</TableHead>
               <TableHead>Price DIT</TableHead>
               <TableHead>Price Non DIT</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {role === "superadmin" && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -50,19 +54,21 @@ function PriceTable({ prices }) {
                 <TableCell className="font-medium">{price.teamSize}</TableCell>
                 <TableCell>{price.priceDit}</TableCell>
                 <TableCell>{price.priceNonDit}</TableCell>
-                <TableCell className="flex justify-end">
-                  <div className="flex gap-2">
-                    <Button size={"icon"}>
-                      <Pen />
-                    </Button>
-                    <Button
-                      size={"icon"}
-                      onClick={() => mutation.mutate(price.id)}
-                    >
-                      <Trash />
-                    </Button>
-                  </div>
-                </TableCell>
+                {role === "superadmin" && (
+                  <TableCell className="flex justify-end">
+                    <div className="flex gap-2">
+                      <Button size={"icon"}>
+                        <Pen />
+                      </Button>
+                      <Button
+                        size={"icon"}
+                        onClick={() => mutation.mutate(price.id)}
+                      >
+                        <Trash />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

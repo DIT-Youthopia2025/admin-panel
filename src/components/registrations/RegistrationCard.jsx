@@ -13,15 +13,16 @@ import { Badge } from "../ui/badge";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { deleteRegistration } from "@/api/registration";
+import { Link, useNavigate } from "react-router-dom";
 
 function RegistrationCard({ registration, key }) {
+  const navigate = useNavigate();
   const deleteMutation = useMutation({
     mutationFn: () => deleteRegistration(registration.id),
     onSuccess: () => {
       toast.success("Registration deleted successfully");
     },
   });
-  const handleView = () => {};
 
   const handleDelete = (id) => {
     deleteMutation.mutate(id);
@@ -50,12 +51,10 @@ function RegistrationCard({ registration, key }) {
 
       <CardFooter className="flex justify-between">
         <div className="flex justify-between gap-2">
-          <Button
-            variant="secondary"
-            onClick={handleView} // <-- This onClick handler now navigates
-            className="cursor-pointer"
-          >
-            <Eye />
+          <Button variant="secondary" className="cursor-pointer">
+            <Link to={`/registration/${registration.id}`}>
+              <Eye />
+            </Link>
           </Button>
           <Button
             variant="destructive"

@@ -8,6 +8,7 @@ import Access from "./pages/Access";
 import Login from "./pages/Login";
 import { NotFoundPage } from "./pages/404Page";
 import EventDetails from "./pages/EventDetails";
+import RegistrationDetails from "./pages/RegistrationDetails";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/registration",
         element: <Registration />,
+      },
+      {
+        path: "/registration/:id",
+        element: <RegistrationDetails />,
       },
       {
         path: "/payments",

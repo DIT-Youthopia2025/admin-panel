@@ -15,6 +15,7 @@ import EventDialog from "./EventDialog";
 import { Eye, IndianRupee, Pen, Trash } from "lucide-react";
 import PriceDialog from "./PriceDialog";
 import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
+import { getRoleFromToken } from "@/lib/decodeToken";
 
 function EventCard({ event }) {
   const queryClient = useQueryClient();
@@ -39,6 +40,8 @@ function EventCard({ event }) {
   const handleView = () => {
     navigate(`/event/${event.id}`);
   };
+
+  const role = getRoleFromToken();
 
   const initialEditData = {
     eventName: event.eventName || "",
@@ -78,15 +81,16 @@ function EventCard({ event }) {
             <span>Venue : {event.venue} </span>
           </div>
         </CardContent>
-
         <CardFooter className="flex justify-between">
-          <div>
-            <PriceDialog initialData={initialPriceData} eventId={event.id}>
-              <Button className="cursor-pointer">
-                <IndianRupee />
-              </Button>
-            </PriceDialog>
-          </div>
+          {role === "superadmin" && (
+            <div>
+              <PriceDialog initialData={initialPriceData} eventId={event.id}>
+                <Button className="cursor-pointer">
+                  <IndianRupee />
+                </Button>
+              </PriceDialog>
+            </div>
+          )}
           <div className="flex justify-between gap-2">
             <Button
               variant="secondary"
@@ -95,23 +99,27 @@ function EventCard({ event }) {
             >
               <Eye />
             </Button>
-            <EventDialog
-              mode="edit"
-              initialData={initialEditData}
-              eventId={event.id}
-            >
-              <Button className="cursor-pointer">
-                <Pen />
+            {role === "superadmin" && (
+              <EventDialog
+                mode="edit"
+                initialData={initialEditData}
+                eventId={event.id}
+              >
+                <Button className="cursor-pointer">
+                  <Pen />
+                </Button>
+              </EventDialog>
+            )}
+            {role === "superadmin" && (
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+                className="cursor-pointer"
+              >
+                <Trash />
               </Button>
-            </EventDialog>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteMutation.isPending}
-              className="cursor-pointer"
-            >
-              <Trash />
-            </Button>
+            )}
           </div>
         </CardFooter>
       </Card>
