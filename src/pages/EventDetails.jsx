@@ -128,7 +128,14 @@ function EventDetails() {
                 <div className="flex flex-col gap-2">
                   <span>E-mail: {elm?.email}</span>
                   <span>Member Count: {elm?.membersCount}</span>
-                  <span>Payment Status: {elm?.paymentStatus}</span>
+                  <span>
+                    Payment Status:{" "}
+                    <Badge
+                      variant={elm.paymentStatus ? "success" : "destructive"}
+                    >
+                      {elm.paymentStatus ? "True" : "False"}
+                    </Badge>
+                  </span>
                   <span>Payment Amount: {elm?.paymentAmount}</span>
                 </div>
                 <div className="mt-4">
