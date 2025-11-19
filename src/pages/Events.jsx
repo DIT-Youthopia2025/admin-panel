@@ -5,6 +5,7 @@ import { fetchEvents } from "../api/event.js";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import React from "react";
+import { getRoleFromToken } from "@/lib/decodeToken.jsx";
 
 function Events() {
   const {
@@ -16,6 +17,7 @@ function Events() {
     queryFn: fetchEvents,
   });
   console.log("Fetched events:", events);
+  const role = getRoleFromToken();
 
   if (isLoading)
     return <p className="text-center text-white">Loading events...</p>;
@@ -25,12 +27,14 @@ function Events() {
     <div className="px-6 mt-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl italic font-semibold">Events</h1>
-        <EventDialog>
-          <Button className="cursor-pointer">
-            <Plus />
-            <span>Create</span>
-          </Button>
-        </EventDialog>
+        {role === "superadmin" && (
+          <EventDialog>
+            <Button className="cursor-pointer">
+              <Plus />
+              <span>Create</span>
+            </Button>
+          </EventDialog>
+        )}
       </div>
       {events.length == 0 && (
         <p className="text-center mt-8">No Events Found</p>
